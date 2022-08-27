@@ -1,10 +1,14 @@
 package br.com.webscrapjava.brasileiraoapi.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +22,7 @@ public class ScrapingUtil {
 	private static final String COMPLEMENTO_URL_GOOGLE = "&hl=pt-BR";
 
 	public static void main(String[] args) {
-		String url = BASE_URL_GOOGLE + "Barra da Tijuca+x+ Macaé " + COMPLEMENTO_URL_GOOGLE;
+		String url = BASE_URL_GOOGLE + "Monza+x+Udinese " + COMPLEMENTO_URL_GOOGLE;
 
 		ScrapingUtil scraping = new ScrapingUtil();
 		scraping.obtemInformacaoesPartida(url);
@@ -42,24 +46,31 @@ public class ScrapingUtil {
 				String tempoPartida = obtemTempoPartida(document);
 				LOGGER.info("TempoPartida: {}", tempoPartida);
 
-				Integer placarEquipeCasa = recuperaPlacarEquipeCasa(document);
-				LOGGER.info("Placar equipe casa: {}",placarEquipeCasa);
-				
-				Integer placarEquipeVisitante = recuperaPlacarEquipeVisitante(document);
-				LOGGER.info("Placar equipe visitante: {}",placarEquipeVisitante);
+		//		Integer placarEquipeCasa = recuperaPlacarEquipeCasa(document);
+			//	LOGGER.info("Placar equipe casa: {}", placarEquipeCasa);
+
+		//		Integer placarEquipeVisitante = recuperaPlacarEquipeVisitante(document);
+		//		LOGGER.info("Placar equipe visitante: {}", placarEquipeVisitante);
+
+				String golsPartidaCasa = recuperaGolsEquipeCasa(document);
+			    LOGGER.info("Gols equipe Casa: {}", golsPartidaCasa);
+
+				String golsPartidaVisitante = recuperaGolsEquipeVisitante(document);
+				LOGGER.info("Gols equipe Visitante: {}", golsPartidaVisitante);
+
 			}
 
-			String nomeEquipeCasa = recuperaNomeEquipeCasa(document);
-			LOGGER.info("Nome da equipe da casa: {}", nomeEquipeCasa);
+			// String nomeEquipeCasa = recuperaNomeEquipeCasa(document);
+			// LOGGER.info("Nome da equipe da casa: {}", nomeEquipeCasa);
 
-			String nomeEquipeVisitante = recuperaNomeEquipeVisitante(document);
-			LOGGER.info("Nome da equipe da visitante: {}", nomeEquipeVisitante);
+			// String nomeEquipeVisitante = recuperaNomeEquipeVisitante(document);
+			// LOGGER.info("Nome da equipe da visitante: {}", nomeEquipeVisitante);
 
-			String urlLogoEquipeCasa = recuperaLogoEquipeCasa(document);
-			LOGGER.info("URL logo da Equipe da Casa : {}", urlLogoEquipeCasa);
+			// String urlLogoEquipeCasa = recuperaLogoEquipeCasa(document);
+			// LOGGER.info("URL logo da Equipe da Casa : {}", urlLogoEquipeCasa);
 
-			String urlLogoEquipeVisitante = recuperaLogoEquipeVisitante(document);
-			LOGGER.info("URL logo da Equipe Visitante : {}", urlLogoEquipeVisitante);
+			// String urlLogoEquipeVisitante = recuperaLogoEquipeVisitante(document);
+			// LOGGER.info("URL logo da Equipe Visitante : {}", urlLogoEquipeVisitante);
 
 		} catch (IOException e) {
 			LOGGER.error("ERRO AO TENTAR CONECTAR NO GOOGLE COM JSOUP ->{}", e.getMessage());
@@ -165,5 +176,29 @@ public class ScrapingUtil {
 		String placarEquipe = document.selectFirst("div[class=imso_mh__r-tm-sc imso_mh__scr-it imso-light-font]")
 				.text();
 		return Integer.valueOf(placarEquipe);
+	}
+
+	public String recuperaGolsEquipeCasa(Document document) {
+		List<String> golsEquipe = new ArrayList<>();
+		Elements elementos = document.select("div[class=imso_gs__tgs imso_gs__left-team]")
+				.select("div[class=imso_gs__gs-r]");
+		for (Element e : elementos) {
+			String infoGol = e.select("div[class=imso_gs__gs-r]").text();
+			golsEquipe.add(infoGol);
+		}
+
+		return String.join(", ", golsEquipe);
+	}
+
+	public String recuperaGolsEquipeVisitante(Document document) {
+		List<String> golsEquipe = new ArrayList<>();
+		Elements elementos = document.select("div[class=imso_gs__tgs imso_gs__right-team]")
+				.select("div[class=imso_gs__gs-r]");
+		elementos.forEach(item -> {
+			String infoGol = item.select("div[class=imso_gs__gs-r]").text();
+			golsEquipe.add(infoGol);
+		});
+
+		return String.join(", ", golsEquipe);
 	}
 }

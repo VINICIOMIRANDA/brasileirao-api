@@ -20,9 +20,12 @@ public class ScrapingUtil {
 
 	private static final String BASE_URL_GOOGLE = "https://www.google.com/search?q=";
 	private static final String COMPLEMENTO_URL_GOOGLE = "&hl=pt-BR";
+	
+	private static final String CASA = "casa";
+	private static final String VISITANTE = "visitante";
 
 	public static void main(String[] args) {
-		String url = BASE_URL_GOOGLE + "Monza+x+Udinese " + COMPLEMENTO_URL_GOOGLE;
+		String url = BASE_URL_GOOGLE + "Monza++x+Udinese" + COMPLEMENTO_URL_GOOGLE;
 
 		ScrapingUtil scraping = new ScrapingUtil();
 		scraping.obtemInformacaoesPartida(url);
@@ -46,31 +49,36 @@ public class ScrapingUtil {
 				String tempoPartida = obtemTempoPartida(document);
 				LOGGER.info("TempoPartida: {}", tempoPartida);
 
-		//		Integer placarEquipeCasa = recuperaPlacarEquipeCasa(document);
-			//	LOGGER.info("Placar equipe casa: {}", placarEquipeCasa);
+				Integer placarEquipeCasa = recuperaPlacarEquipeCasa(document);
+				LOGGER.info("Placar equipe casa: {}", placarEquipeCasa);
 
-		//		Integer placarEquipeVisitante = recuperaPlacarEquipeVisitante(document);
-		//		LOGGER.info("Placar equipe visitante: {}", placarEquipeVisitante);
+				Integer placarEquipeVisitante = recuperaPlacarEquipeVisitante(document);
+				LOGGER.info("Placar equipe visitante: {}", placarEquipeVisitante);
 
 				String golsPartidaCasa = recuperaGolsEquipeCasa(document);
-			    LOGGER.info("Gols equipe Casa: {}", golsPartidaCasa);
+				LOGGER.info("Gols equipe Casa: {}", golsPartidaCasa);
 
 				String golsPartidaVisitante = recuperaGolsEquipeVisitante(document);
 				LOGGER.info("Gols equipe Visitante: {}", golsPartidaVisitante);
+				
+				Integer placarEstendidoEquipeCasa = buscaPenalidades(document, CASA);
+				Integer placarEstendidoEquipeVisitante = buscaPenalidades(document, VISITANTE);
+				LOGGER.info("placar estendido Equipe Casa: {}",placarEstendidoEquipeCasa);
+				LOGGER.info("placar estendido Equipe Visitante: {}",placarEstendidoEquipeVisitante);
 
 			}
 
-			// String nomeEquipeCasa = recuperaNomeEquipeCasa(document);
-			// LOGGER.info("Nome da equipe da casa: {}", nomeEquipeCasa);
+			String nomeEquipeCasa = recuperaNomeEquipeCasa(document);
+			LOGGER.info("Nome da equipe da casa: {}", nomeEquipeCasa);
 
-			// String nomeEquipeVisitante = recuperaNomeEquipeVisitante(document);
-			// LOGGER.info("Nome da equipe da visitante: {}", nomeEquipeVisitante);
+			String nomeEquipeVisitante = recuperaNomeEquipeVisitante(document);
+			LOGGER.info("Nome da equipe da visitante: {}", nomeEquipeVisitante);
 
-			// String urlLogoEquipeCasa = recuperaLogoEquipeCasa(document);
-			// LOGGER.info("URL logo da Equipe da Casa : {}", urlLogoEquipeCasa);
+			String urlLogoEquipeCasa = recuperaLogoEquipeCasa(document);
+			LOGGER.info("URL logo da Equipe da Casa : {}", urlLogoEquipeCasa);
 
-			// String urlLogoEquipeVisitante = recuperaLogoEquipeVisitante(document);
-			// LOGGER.info("URL logo da Equipe Visitante : {}", urlLogoEquipeVisitante);
+			String urlLogoEquipeVisitante = recuperaLogoEquipeVisitante(document);
+			LOGGER.info("URL logo da Equipe Visitante : {}", urlLogoEquipeVisitante);
 
 		} catch (IOException e) {
 			LOGGER.error("ERRO AO TENTAR CONECTAR NO GOOGLE COM JSOUP ->{}", e.getMessage());
@@ -169,13 +177,13 @@ public class ScrapingUtil {
 	public Integer recuperaPlacarEquipeCasa(Document document) {
 		String placarEquipe = document.selectFirst("div[class=imso_mh__l-tm-sc imso_mh__scr-it imso-light-font]")
 				.text();
-		return Integer.valueOf(placarEquipe);
+		return formataPlacasStringInteger(placarEquipe);
 	}
 
 	public Integer recuperaPlacarEquipeVisitante(Document document) {
 		String placarEquipe = document.selectFirst("div[class=imso_mh__r-tm-sc imso_mh__scr-it imso-light-font]")
 				.text();
-		return Integer.valueOf(placarEquipe);
+		return formataPlacasStringInteger(placarEquipe);
 	}
 
 	public String recuperaGolsEquipeCasa(Document document) {
@@ -200,5 +208,32 @@ public class ScrapingUtil {
 		});
 
 		return String.join(", ", golsEquipe);
+	}
+	
+	public Integer buscaPenalidades(Document document, String tipoEquipe) {
+		
+		boolean isPenalidades = document.select("div[class=imso_mh_s__psn-sc]").isEmpty();
+		
+		if(!isPenalidades) {
+			String penalidades = document.select("div[class=imso_mh_s__psn-sc]").text();
+			String penalidadesCompleta = penalidades.substring(0, 5).replace(" ", "");
+			String[] divisao = penalidadesCompleta.split("-");
+			
+			return tipoEquipe.equals(CASA) ? formataPlacasStringInteger(divisao[0]) : formataPlacasStringInteger(divisao[1]);
+		}
+		
+		return null;
+		
+	}
+	
+	public Integer formataPlacasStringInteger(String placar) {
+		Integer valor;
+		
+		try {
+			valor = Integer.parseInt(placar);
+		} catch (Exception e) {
+			valor = 0;
+		}
+		return valor;
 	}
 }

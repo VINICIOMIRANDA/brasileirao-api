@@ -97,21 +97,26 @@ public class ScrapingUtil {
 			}
 
 			String nomeEquipeCasa = recuperaNomeEquipe(document, DIV_DADOS_EQUIPE_CASA);
+			partida.setNomeEquipeCasa(nomeEquipeCasa);
 			LOGGER.info("Nome da equipe da casa: {}", nomeEquipeCasa);
 
 			String nomeEquipeVisitante = recuperaNomeEquipe(document, DIV_DADOS_EQUIPE_VISITANTE);
+			partida.setNomeEquipeVisitante(nomeEquipeVisitante);
 			LOGGER.info("Nome da equipe da visitante: {}", nomeEquipeVisitante);
 
 			String urlLogoEquipeCasa = recuperaLogoEquipe(document, DIV_DADOS_EQUIPE_CASA);
+			partida.setUrLogoEquipeCasa(urlLogoEquipeCasa);
 			LOGGER.info("URL logo da Equipe da Casa : {}", urlLogoEquipeCasa);
 
 			String urlLogoEquipeVisitante = recuperaLogoEquipe(document, DIV_DADOS_EQUIPE_VISITANTE);
+			partida.setUrLogoEquipeVisitante(urlLogoEquipeVisitante);
 			LOGGER.info("URL logo da Equipe Visitante : {}", urlLogoEquipeVisitante);
+			return partida;
 
 		} catch (IOException e) {
 			LOGGER.error("ERRO AO TENTAR CONECTAR NO GOOGLE COM JSOUP ->{}", e.getMessage());
 		}
-		return partida;
+		return null;
 	}
 
 

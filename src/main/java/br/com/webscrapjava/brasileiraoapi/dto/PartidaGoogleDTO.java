@@ -25,13 +25,13 @@ public class PartidaGoogleDTO implements Serializable {
 	private String urLogoEquipeCasa;
 	private Integer placarEquipeCasa;
 	private String golsEquipeCasa;
-	private String palcarEstendidoEquipeCasa;
+	private Integer placarEstendidoEquipeCasa;
 	
 	private String nomeEquipeVisitante;
 	private String urLogoEquipeVisitante;
 	private Integer placarEquipeVisitante;
 	private String golsEquipeVisitante;
-	private String palcarEstendidoEquipeVisitante;
+	private Integer placarEstendidoEquipeVisitante;
 	
 	
 	public String getStatusPartida() {
@@ -70,11 +70,11 @@ public class PartidaGoogleDTO implements Serializable {
 	public void setGolsEquipeCasa(String golsEquipeCasa) {
 		this.golsEquipeCasa = golsEquipeCasa;
 	}
-	public String getPalcarEstendidoEquipeCasa() {
-		return palcarEstendidoEquipeCasa;
+	public Integer getPlacarEstendidoEquipeCasa() {
+		return placarEstendidoEquipeCasa;
 	}
-	public void setPalcarEstendidoEquipeCasa(String palcarEstendidoEquipeCasa) {
-		this.palcarEstendidoEquipeCasa = palcarEstendidoEquipeCasa;
+	public void setPalcarEstendidoEquipeCasa(Integer palcarEstendidoEquipeCasa) {
+		this.placarEstendidoEquipeCasa = palcarEstendidoEquipeCasa;
 	}
 	public String getNomeEquipeVisitante() {
 		return nomeEquipeVisitante;
@@ -100,11 +100,11 @@ public class PartidaGoogleDTO implements Serializable {
 	public void setGolsEquipeVisitante(String golsEquipeVisitante) {
 		this.golsEquipeVisitante = golsEquipeVisitante;
 	}
-	public String getPalcarEstendidoEquipeVisitante() {
-		return palcarEstendidoEquipeVisitante;
+	public Integer getPlacarEstendidoEquipeVisitante() {
+		return placarEstendidoEquipeVisitante;
 	}
-	public void setPalcarEstendidoEquipeVisitante(String palcarEstendidoEquipeVisitante) {
-		this.palcarEstendidoEquipeVisitante = palcarEstendidoEquipeVisitante;
+	public void setPlacarEstendidoEquipeVisitante(Integer placarEstendidoEquipeVisitante) {
+		this.placarEstendidoEquipeVisitante = placarEstendidoEquipeVisitante;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;

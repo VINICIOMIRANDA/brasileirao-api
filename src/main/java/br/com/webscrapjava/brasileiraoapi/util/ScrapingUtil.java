@@ -2,7 +2,6 @@ package br.com.webscrapjava.brasileiraoapi.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -11,9 +10,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import br.com.webscrapjava.brasileiraoapi.dto.PartidaGoogleDTO;
 
+
+@Service
 public class ScrapingUtil {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScrapingUtil.class);
@@ -23,6 +25,7 @@ public class ScrapingUtil {
 	private static final String DIV_TEMPO_PARTIDA_ANDAMENTO = "div [class=imso_mh__lv-m-stts-cont]";
 	private static final String DIV_TEMPO_PARTIDA_ENCERRADA = "span[class=imso_mh__ft-mtch imso-medium-font imso_mh__ft-mtchc]";
 	
+	private static final String DIV_NOME_CAMPEONATO = "div [class=imso-hide-overflow]";
 	private static final String DIV_DADOS_EQUIPE_CASA = "div[class=imso_mh__first-tn-ed imso_mh__tnal-cont imso-tnol]";
 	private static final String DIV_DADOS_EQUIPE_VISITANTE = "div[class=imso_mh__second-tn-ed imso_mh__tnal-cont imso-tnol]";
 
@@ -43,11 +46,7 @@ public class ScrapingUtil {
 	private static final String SPAN = "SPAN";
 	private static final String PENALTIS = "Pênaltis";
 
-	public static void main(String[] args) {
-		String url = BASE_URL_GOOGLE + "palmeiras x corinthians 08/08/2020" + COMPLEMENTO_URL_GOOGLE;
-		ScrapingUtil scraping = new ScrapingUtil();
-		scraping.obtemInformacaoesPartida(url);
-	}
+
 
 	public PartidaGoogleDTO obtemInformacaoesPartida(String url) {
 		PartidaGoogleDTO partida = new PartidaGoogleDTO();
@@ -60,27 +59,39 @@ public class ScrapingUtil {
 			LOGGER.info("Titulo da pagina: {} ", title);
 
 			StatusPartida statusPartida = obtemStatusPartida(document);
+			partida.setStatusPartida(statusPartida.toString());
 			LOGGER.info("statusPartida : {}", statusPartida);
-
+			
+			String nomeCampeonato = recuperaNomeCampeonato(document, DIV_NOME_CAMPEONATO);
+			LOGGER.info("nomeCampeonato : {}", nomeCampeonato);
+			
 			if (statusPartida != StatusPartida.PARTIDA_NAO_INICIADA) {
 				String tempoPartida = obtemTempoPartida(document);
+				partida.setTempoPartida(tempoPartida);
 				LOGGER.info("TempoPartida: {}", tempoPartida);
-
+				
 				Integer placarEquipeCasa = recuperaPlacarEquipe(document, DIV_PLACAR_EQUIPE_CASA);
+				partida.setPlacarEquipeCasa(placarEquipeCasa);
 				LOGGER.info("Placar equipe casa: {}", placarEquipeCasa);
 
 				Integer placarEquipeVisitante = recuperaPlacarEquipe(document, DIV_PLACAR_EQUIPE_VISITANTE);
+				partida.setPlacarEquipeVisitante(placarEquipeVisitante);
 				LOGGER.info("Placar equipe visitante: {}", placarEquipeVisitante);
 
 				String golsPartidaCasa = recuperaGolsEquipe(document, DIV_GOLS_EQUIPE_CASA);
+				partida.setGolsEquipeCasa(golsPartidaCasa);
 				LOGGER.info("Gols equipe Casa: {}", golsPartidaCasa);
 
 				String golsPartidaVisitante = recuperaGolsEquipe(document, DIV_GOLS_EQUIPE_VISITANTE);
+				partida.setGolsEquipeVisitante(golsPartidaVisitante);
 				LOGGER.info("Gols equipe Visitante: {}", golsPartidaVisitante);
 
 				Integer placarEstendidoEquipeCasa = buscaPenalidades(document, CASA);
+				partida.setPalcarEstendidoEquipeCasa(placarEstendidoEquipeCasa);
 				Integer placarEstendidoEquipeVisitante = buscaPenalidades(document, VISITANTE);
-				LOGGER.info("placar estendido Equipe Casa: {}", placarEstendidoEquipeCasa);
+				partida.setPlacarEstendidoEquipeVisitante(placarEstendidoEquipeVisitante);
+				
+				LOGGER.info("placar estendido Equipe Casa: {}",placarEstendidoEquipeCasa);
 				LOGGER.info("placar estendido Equipe Visitante: {}", placarEstendidoEquipeVisitante);
 
 			}
@@ -102,6 +113,8 @@ public class ScrapingUtil {
 		}
 		return partida;
 	}
+
+
 
 	public StatusPartida obtemStatusPartida(Document document) {
 
@@ -158,6 +171,13 @@ public class ScrapingUtil {
 		String nomeEquipe = elemento.select(SPAN).text();
 		return nomeEquipe;
 	}
+	
+	
+	public String recuperaNomeCampeonato(Document document,String itemHtml) {
+		Element elemento = document.selectFirst(itemHtml);
+		String nomeCampeonato = elemento.select(SPAN).text();
+		return nomeCampeonato;
+	}
 
 	public String recuperaLogoEquipe(Document document, String itemHtml) {
 		Element elemento = document.selectFirst(itemHtml);
@@ -201,5 +221,19 @@ public class ScrapingUtil {
 			valor = 0;
 		}
 		return valor;
+	}
+	
+	public String montaURLGoogle(String nomeEquipeCasa, String nomeEquipeVisitante) {
+		try {
+			String equipeCasa = nomeEquipeCasa.replace(" ","+").replace("-","+");
+			String equipeVisitante = nomeEquipeVisitante.replace(" ","+").replace("-","+");
+			
+			return BASE_URL_GOOGLE +equipeCasa + "+x+"+ equipeVisitante + COMPLEMENTO_URL_GOOGLE;
+			
+		} catch (Exception e) {
+			LOGGER.error("ERRO:{}", e.getMessage());
+		}
+		
+		return null;
 	}
 }

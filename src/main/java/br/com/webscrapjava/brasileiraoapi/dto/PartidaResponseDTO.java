@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class PartidarResponseDTO implements Serializable {
+public class PartidaResponseDTO implements Serializable {
 	/**
 	 * 
 	 */

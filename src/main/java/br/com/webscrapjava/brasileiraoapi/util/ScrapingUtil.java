@@ -48,7 +48,7 @@ public class ScrapingUtil {
 
 
 
-	public PartidaGoogleDTO obtemInformacaoesPartida(String url) {
+	public PartidaGoogleDTO obtemInformacaoesGoogle(String url) {
 		PartidaGoogleDTO partida = new PartidaGoogleDTO();
 
 		Document document = null;

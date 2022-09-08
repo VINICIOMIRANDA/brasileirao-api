@@ -48,7 +48,7 @@ public class EquipeService {
 		return equipeRepository.save(equipe);
 	}
 
-	public void alterarEquipe(Long id, EquipeDTO dto) {
+	public void alterarEquipe(Long id,  @Valid EquipeDTO dto) {
 		boolean exists = equipeRepository.existsById(id);
 		
 		if (!exists) {
@@ -59,5 +59,7 @@ public class EquipeService {
 		equipeRepository.save(equipe);
 		
 	}
+
+
 
 }

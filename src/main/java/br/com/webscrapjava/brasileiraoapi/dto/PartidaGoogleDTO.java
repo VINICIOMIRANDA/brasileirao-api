@@ -2,6 +2,7 @@ package br.com.webscrapjava.brasileiraoapi.dto;
 
 import java.io.Serializable;
 
+import br.com.webscrapjava.brasileiraoapi.util.StatusPartida;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class PartidaGoogleDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String statusPartida;
+	private StatusPartida statusPartida;
 	private String tempoPartida;
 	
 	private String nomeEquipeCasa;
@@ -34,10 +35,10 @@ public class PartidaGoogleDTO implements Serializable {
 	private Integer placarEstendidoEquipeVisitante;
 	
 	
-	public String getStatusPartida() {
+	public StatusPartida getStatusPartida() {
 		return statusPartida;
 	}
-	public void setStatusPartida(String statusPartida) {
+	public void setStatusPartida(StatusPartida statusPartida) {
 		this.statusPartida = statusPartida;
 	}
 	public String getTempoPartida() {
